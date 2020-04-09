@@ -5,22 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rust Wasm App</title>
   <script>
-      // Legacy way: fetching entire wasm before we initiate
-      fetch("rust_wasm_app.gc.wasm")
-        .then(response => response.arrayBuffer())
-        .then(result => WebAssembly.instantiate(result))
-        .then(wasmModule => {
-          const result = wasmModule.instance.exports.add_one(2);
-          const text = document.createTextNode(result);
-          document.body.appendChild(text);
-        });
-      // New way: stream, compile and instantiate
-      WebAssembly.instantiateStreaming(fetch("rust_wasm_app.gc.wasm"))
-        .then(wasmModule => {
-          const result = wasmModule.instance.exports.add_one(3);
-          const text = document.createTextNode(result);
-          document.body.appendChild(text);
-        });
+    const appendNumberToBody = (number) => {
+      const text = document.createTextNode(number);
+      document.body.appendChild(text);
+    }
+    // Provide functions to the wasm module
+    const importObject = {
+      env: {
+        appendNumberToBody: appendNumberToBody,
+        alert: alert,
+      }
+    };
+    // Legacy way: fetching entire wasm before we initiate
+    fetch("rust_wasm_app.gc.wasm")
+      .then(response => response.arrayBuffer())
+      .then(result => WebAssembly.instantiate(result, importObject))
+      .then(wasmModule => {
+        const result = wasmModule.instance.exports.add_one(2);
+        const text = document.createTextNode(result);
+        document.body.appendChild(text);
+      });
+    // New way: stream, compile and instantiate
+    WebAssembly.instantiateStreaming(fetch("rust_wasm_app.gc.wasm"), importObject)
+      .then(wasmModule => {
+        const result = wasmModule.instance.exports.add_one(3);
+        const text = document.createTextNode(result);
+        document.body.appendChild(text);
+      });
+
+    WebAssembly.instantiateStreaming(fetch("rust_wasm_app.gc.wasm"), importObject)
+      .then(wasmModule => {
+        wasmModule.instance.exports.run();
+      })
     </script>
 </head>
 <body>

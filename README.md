@@ -30,3 +30,44 @@ WebAssembly.instantiateStreaming(fetch("rust_wasm_app.gc.wasm"))
     document.body.appendChild(text);
   });
 ```
+
+### Step 2
+Pass a JavaScript Function to WebAssembly and Invoke it from Rust
+
+__snippets__ for index.html:
+
+```js
+const appendNumberToBody = (number) => {
+  const text = document.createTextNode(number);
+  document.body.appendChild(text;)
+}
+
+const importObject = {
+  env: {
+    appendNumberToBody: appendNumberToBody,
+    alert: alert,
+  }
+};
+
+WebAssembly.instantiateStreaming(fetch("rust_wasm_app.gc.wasm"), importObject)
+  .then(wasmModule => {
+    wasmModule.instance.exports.run();
+  })
+```
+
+__snippets__ for `lib.rs`:
+
+```rust
+extern {
+  fn appendNumberToBody(x: u32);
+  fn alert(x: u32);
+}
+
+#[no_mangle]
+pub extern fn run() {
+  unsafe {
+    appendNumberToBody(42);
+    alert(4);
+  }
+}
+```
