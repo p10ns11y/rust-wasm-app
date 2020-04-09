@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rust Wasm App</title>
+  <script>
+      // Legacy way: fetching entire wasm before we initiate
+      fetch("rust_wasm_app.gc.wasm")
+        .then(response => response.arrayBuffer())
+        .then(result => WebAssembly.instantiate(result))
+        .then(wasmModule => {
+          const result = wasmModule.instance.exports.add_one(2);
+          const text = document.createTextNode(result);
+          document.body.appendChild(text);
+        });
+      // New way: stream, compile and instantiate
+      WebAssembly.instantiateStreaming(fetch("rust_wasm_app.gc.wasm"))
+        .then(wasmModule => {
+          const result = wasmModule.instance.exports.add_one(3);
+          const text = document.createTextNode(result);
+          document.body.appendChild(text);
+        });
+    </script>
+</head>
+<body>
+
+</body>
+</html>

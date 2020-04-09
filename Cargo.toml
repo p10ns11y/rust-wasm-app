@@ -1,0 +1,12 @@
+[package]
+name = "rust-wasm-app"
+version = "0.1.0"
+authors = ["Peramanathan Sathyamoorthy <sathyam.peram@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+[lib]
+crate-type = ["cdylib"]
