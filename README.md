@@ -71,3 +71,6 @@ pub extern fn run() {
   }
 }
 ```
+
+Reference:
+- https://egghead.io/courses/using-webassembly-with-rust
